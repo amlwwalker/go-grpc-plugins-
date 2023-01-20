@@ -1,0 +1,52 @@
+syntax = "proto3";
+package greenfinch;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "pb/greenfinch";
+
+//A plugin will offer this array of functions that the host can call upon
+//go:plugin type=plugin version=1
+service Plugin {
+  rpc Init(PluginInit) returns (PluginReply) {}
+  rpc Content(google.protobuf.Empty) returns (PluginContent) {}
+  rpc Setting(google.protobuf.Empty) returns (PluginContent) {}
+}
+
+// The plugin initialisation message
+message PluginInit {
+}
+
+// The plugin initialisation message
+message PluginContent {
+  string content = 1;
+}
+
+// The plugin initialisation message
+message PluginSetting {
+}
+
+message PluginReply {
+  string pluginId = 1;
+  string Message = 2;
+}
+
+// The host functions embedded into the plugin
+// go:plugin type=host
+service GreenfinchFunctions {
+  rpc RequestSign(Payload) returns (SignResponse) {}
+  rpc Log(LogRequest) returns (google.protobuf.Empty) {}
+}
+
+message Payload {
+  string payload = 1;
+  string meta = 2;
+}
+
+message SignResponse {
+  string signedPayload = 1;
+}
+
+message LogRequest {
+  string message = 1;
+}
